@@ -29,6 +29,8 @@
  "/sys/class/hwmon/hwmon0/device/temp1_input"
 #define HWMON_OPI \
  "/sys/class/thermal/thermal_zone0/temp"
+#define HWMON_ARMBIAN \
+ "/etc/armbianmonitor/datasources/soctemp"
 
 
 static float linux_cputemp(int core)
@@ -50,10 +52,13 @@ static float linux_cputemp(int core)
 		fd = fopen(HWMON_ALT4, "r");
 
 	if (!fd)
-                fd = fopen(HWMON_ALT5, "r");
-        
+    fd = fopen(HWMON_ALT5, "r");
+
 	if (!fd)
-                fd = fopen(HWMON_OPI, "r");
+    fd = fopen(HWMON_OPI, "r");
+
+  if (!fd)
+    fd = fopen(HWMON_ARMBIAN, "r");
 
 	if (!fd)
 		return tc;
@@ -79,12 +84,12 @@ static uint32_t linux_cpufreq(int core)
 
 	if (!fd)
 	  fd = fopen(CPUFREQ_PATH_ALT, "r");
-	
+
 	if (!fd)
 	  fd = fopen(CPUFREQ_PATH_OPI, "r");
-	
+
 	if (!fd)
-	  return freq;	
+	  return freq;
 
 	if (!fscanf(fd, "%d", &freq))
 		return freq;
